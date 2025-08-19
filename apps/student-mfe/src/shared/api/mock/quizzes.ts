@@ -12,7 +12,10 @@ export const MOCK_QUIZZES: Quiz[] = [
     status: 'completed',
     score: 85,
     totalQuestions: 20,
-    completedAt: '2025-01-15 14:30'
+    completedAt: '2025-01-15 14:30',
+    difficulty: 'easy',
+    subject: 'Programming',
+    isCompleted: true
   },
   {
     id: '2',
@@ -24,7 +27,10 @@ export const MOCK_QUIZZES: Quiz[] = [
     status: 'completed',
     score: 92,
     totalQuestions: 15,
-    completedAt: '2025-01-18 16:45'
+    completedAt: '2025-01-18 16:45',
+    difficulty: 'medium',
+    subject: 'Frontend',
+    isCompleted: true
   },
   {
     id: '3',
@@ -34,7 +40,10 @@ export const MOCK_QUIZZES: Quiz[] = [
     duration: 40,
     createdAt: '2025-01-20',
     status: 'in-progress',
-    totalQuestions: 25
+    totalQuestions: 25,
+    difficulty: 'hard',
+    subject: 'Programming',
+    isCompleted: false
   },
   {
     id: '4',
@@ -44,6 +53,9 @@ export const MOCK_QUIZZES: Quiz[] = [
     duration: 35,
     createdAt: '2025-01-22',
     status: 'pending',
-    totalQuestions: 18
+    totalQuestions: 18,
+    difficulty: 'medium',
+    subject: 'Database',
+    isCompleted: false
   }
 ];

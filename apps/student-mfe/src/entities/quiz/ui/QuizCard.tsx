@@ -1,4 +1,4 @@
-import type { Quiz } from '@/store/studentStore';
+import type { Quiz } from '@/entities/quiz/model/types';
 
 interface QuizCardProps {
   quiz: Quiz;

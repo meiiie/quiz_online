@@ -1,19 +1,9 @@
 // Student Store - Quản lý state cho student MFE
 import { create } from 'zustand';
+import type { Quiz } from '@/entities/quiz/model/types';
 
-export interface Quiz {
-  id: string;
-  title: string;
-  description: string;
-  duration: number; // phút
-  totalQuestions: number;
-  difficulty: 'easy' | 'medium' | 'hard';
-  subject: string;
-  isCompleted: boolean;
-  score?: number;
-  completedAt?: string;
-  createdAt: string;
-}
+// Re-export Quiz type for convenience
+export type { Quiz } from '@/entities/quiz/model/types';
 
 export interface StudentProfile {
   id: string;

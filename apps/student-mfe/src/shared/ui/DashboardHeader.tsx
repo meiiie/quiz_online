@@ -1,5 +1,5 @@
 // Student Dashboard Header Component
-import { StudentProfile } from '@/store/studentStore';
+import type { StudentProfile } from '@/store/studentStore';
 
 interface DashboardHeaderProps {
   profile: StudentProfile | null;
