@@ -8,6 +8,7 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoutes';
 import MainLayout from '../layouts/MainLayout';
+import StudentLayout from '../layouts/StudentLayout';
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/LoginPage';
 import NotFoundPage from '../pages/NotFoundPage';
@@ -39,9 +40,13 @@ export default function AppRoutes() {
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         
-        {/* Protected Routes for Student MFE */}
+        {/* Protected Routes for Student MFE với StudentLayout (no header/footer) */}
         <Route element={<ProtectedRoute allowedRoles={['student']} />}>
-          <Route path="/student/*" element={<StudentApp />} />
+          <Route path="/student/*" element={
+            <StudentLayout>
+              <StudentApp />
+            </StudentLayout>
+          } />
         </Route>
         
         {/* Public routes with MainLayout */}

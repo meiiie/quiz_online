@@ -13,7 +13,7 @@ export default defineConfig({
       name: 'student_mfe',
       filename: 'remoteEntry.js',
       exposes: {
-        './StudentApp': './src/StudentApp.tsx'
+        './StudentApp': './src/App.tsx'
       },
       shared: ['react', 'react-dom']
     })

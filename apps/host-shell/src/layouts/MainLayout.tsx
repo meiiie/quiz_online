@@ -10,15 +10,19 @@ import ScrollToTopButton from '../components/ScrollToTopButton';
 import { Toaster } from '../components/ui/toaster';
 import { useIsMobile } from '../hooks/use-mobile';
 
-export default function MainLayout() {
+interface MainLayoutProps {
+  children?: React.ReactNode;
+}
+
+export default function MainLayout({ children }: MainLayoutProps) {
   const location = useLocation();
   const isMobile = useIsMobile();
   
   // Homepage doesn't need top padding because it has full-height hero section
   const isHomePage = location.pathname === '/';
   
-  // Mobile-optimized padding
-  const topPadding = !isHomePage ? (isMobile ? 'pt-16' : 'pt-24') : '';
+  // Mobile-optimized padding - adjusted for new header height
+  const topPadding = !isHomePage ? (isMobile ? 'pt-20' : 'pt-28') : '';
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -26,7 +30,7 @@ export default function MainLayout() {
       
       {/* Main content with mobile-optimized padding */}
       <main className={`flex-grow ${topPadding}`}>
-        <Outlet /> 
+        {children || <Outlet />}
       </main>
 
       <Footer />

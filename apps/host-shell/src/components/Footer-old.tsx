@@ -118,54 +118,55 @@ export default function Footer() {
                 className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
                 aria-label="Email hỗ trợ"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
-                  <path d="M11.893 8.696c1.274.07 2.253.808 2.253 2.4 0 1.413-.92 2.5-2.364 2.5-.239 0-.469-.041-.682-.117l-.728 2.782c-.024.089-.082.15-.171.178-.089.027-.185.009-.256-.048l-1.913-1.538c-.071-.057-.113-.143-.118-.236-.004-.093.032-.183.099-.248l2.307-2.252c-.354-.4-.566-.924-.566-1.496 0-1.274 1.036-2.308 2.309-2.308.07 0 .139.003.207.008-.001-.001-.001-.001 0 0z" />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 7.89a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
                 </svg>
               </Link>
             </div>
           </div>
 
-          <div className="lg:col-span-3">
-            <div className="grid md:grid-cols-3 gap-8">
-              {Object.values(footerSections).map((section) => (
-                <div key={section.title}>
-                  <h3 className="font-semibold text-gray-900 mb-4">{section.title}</h3>
-                  <ul className="space-y-3">
-                    {section.items.map((item) => (
-                      <li key={item.href}>
-                        {item.external ? (
-                          <a
-                            href={item.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm"
-                          >
-                            {item.label}
-                          </a>
-                        ) : (
-                          <Link
-                            to={item.href}
-                            className="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm"
-                          >
-                            {item.label}
-                          </Link>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+          {/* Footer Navigation Sections */}
+          {Object.entries(footerSections).map(([key, section]) => (
+            <div key={key}>
+              <h3 className="mb-4 font-semibold text-gray-900 text-sm uppercase tracking-wider">{section.title}</h3>
+              <ul className="space-y-3">
+                {section.items.map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      to={item.href}
+                      className="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm flex items-center group"
+                      {...(item.external && { target: "_blank", rel: "noopener noreferrer" })}
+                    >
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">{item.label}</span>
+                      {item.external && (
+                        <svg className="w-3 h-3 ml-1 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          ))}
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-            <div className="flex items-center space-x-1 mb-4 md:mb-0">
-              <span>© {CURRENT_YEAR} Đại Học Hàng Hải Việt Nam. Tất cả quyền được bảo lưu.</span>
-            </div>
-            <div className="flex items-center space-x-1">
+        <div className="border-t border-gray-200 pt-8 mt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-gray-600 mb-4 md:mb-0">
+              &copy; {CURRENT_YEAR} Đại Học Hàng Hải Việt Nam. Tất cả quyền được bảo lưu.
+            </p>
+            <div className="flex items-center space-x-6 text-sm">
               <span className="text-gray-500">
                 Hệ thống nội bộ dành cho sinh viên
               </span>
