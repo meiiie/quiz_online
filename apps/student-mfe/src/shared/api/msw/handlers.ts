@@ -6,7 +6,7 @@
  */
 
 import { http, HttpResponse, delay } from 'msw';
-import { mockDb } from './db';
+import { mockDb, MOCK_HISTORY } from './db';
 
 // In-memory storage for quiz attempts (will be enhanced later)
 interface QuizAnswer {
@@ -218,8 +218,49 @@ export const quizHandlers = [
 ];
 
 /**
+ * Quiz History API Handlers
+ */
+export const historyHandlers = [
+  // GET /api/history - Fetch quiz completion history
+  http.get('/api/history', async () => {
+    console.log('🎯 MSW: Intercepted GET /api/history');
+    await delay(600); // Simulate network latency
+    
+    // Sort by completion date (newest first)
+    const sortedHistory = [...MOCK_HISTORY].sort((a, b) => 
+      new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
+    );
+    
+    console.log('✅ MSW: Returning', sortedHistory.length, 'history records');
+    return HttpResponse.json(sortedHistory);
+  }),
+
+  // GET /api/history/stats - Fetch quiz history statistics
+  http.get('/api/history/stats', async () => {
+    console.log('🎯 MSW: Intercepted GET /api/history/stats');
+    await delay(400);
+    
+    const stats = {
+      totalAttempts: MOCK_HISTORY.length,
+      averageScore: MOCK_HISTORY.reduce((acc, attempt) => 
+        acc + (attempt.score / attempt.totalQuestions * 100), 0) / MOCK_HISTORY.length,
+      bestScore: Math.max(...MOCK_HISTORY.map(attempt => 
+        attempt.score / attempt.totalQuestions * 100)),
+      totalTimeSpent: MOCK_HISTORY.reduce((acc, attempt) => 
+        acc + (attempt.timeSpent || 0), 0),
+      completionRate: MOCK_HISTORY.filter(attempt => 
+        attempt.status === 'completed').length / MOCK_HISTORY.length * 100
+    };
+    
+    console.log('✅ MSW: Returning quiz history stats');
+    return HttpResponse.json(stats);
+  })
+];
+
+/**
  * Export all handlers
  */
 export const handlers = [
-  ...quizHandlers
+  ...quizHandlers,
+  ...historyHandlers
 ];

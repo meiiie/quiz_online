@@ -6,6 +6,11 @@
  */
 
 import type { QuizAnswer } from '../../entities/quiz/model/types';
+import type { 
+  QuizAttempt, 
+  QuizHistoryStats, 
+  QuizHistoryFilter 
+} from '../../entities/history/model/types';
 
 // Development environment check
 const isDevelopment = typeof window !== 'undefined' && window.location.hostname === 'localhost';
@@ -293,6 +298,118 @@ export const apiStatus = {
 };
 
 /**
+ * Quiz History API Methods
+ */
+export const historyAPI = {
+  /**
+   * Get quiz completion history
+   */
+  async getHistory(filter?: QuizHistoryFilter): Promise<QuizAttempt[]> {
+    try {
+      console.log('🌐 API: Fetching quiz history...');
+      
+      // Build query parameters from filter
+      const queryParams = new URLSearchParams();
+      if (filter?.subject) queryParams.append('subject', filter.subject);
+      if (filter?.dateFrom) queryParams.append('dateFrom', filter.dateFrom);
+      if (filter?.dateTo) queryParams.append('dateTo', filter.dateTo);
+      if (filter?.status) queryParams.append('status', filter.status);
+      
+      const url = `/api/history${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ API: Quiz history fetched successfully:', data.length, 'records');
+      return data;
+      
+    } catch (error) {
+      console.error('❌ API: Failed to fetch quiz history:', error);
+      throw new Error('Unable to load quiz history. Please try again.');
+    }
+  },
+
+  /**
+   * Get quiz history statistics
+   */
+  async getStats(): Promise<QuizHistoryStats> {
+    try {
+      console.log('🌐 API: Fetching quiz history stats...');
+      
+      const response = await fetch('/api/history/stats');
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ API: Quiz history stats fetched successfully');
+      return data;
+      
+    } catch (error) {
+      console.error('❌ API: Failed to fetch quiz history stats:', error);
+      throw new Error('Unable to load quiz statistics. Please try again.');
+    }
+  },
+
+  /**
+   * Get specific quiz attempt details
+   */
+  async getAttemptDetails(attemptId: string): Promise<QuizAttempt> {
+    try {
+      console.log('🌐 API: Fetching quiz attempt details...', attemptId);
+      
+      const response = await fetch(`/api/history/${attemptId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ API: Quiz attempt details fetched successfully');
+      return data;
+      
+    } catch (error) {
+      console.error('❌ API: Failed to fetch quiz attempt details:', error);
+      throw new Error('Unable to load quiz attempt details. Please try again.');
+    }
+  }
+};
+
+/**
+ * Global API Facade
+ * Unified interface for all API operations
+ */
+export const api = {
+  quiz: quizAPI,
+  history: historyAPI,
+  
+  /**
+   * Initialize API system
+   */
+  async initialize() {
+    return quizAPI.initialize();
+  },
+
+  /**
+   * Test API connectivity
+   */
+  async test() {
+    return quizAPI.test();
+  },
+
+  /**
+   * Reset API state (for testing)
+   */
+  async reset() {
+    apiManager['initPromise'] = null;
+    apiManager['mswInitialized'] = false;
+    return apiManager.initialize();
+  }
+};
+
+/**
  * Default exports for backward compatibility
  */
 export default quizAPI;
@@ -300,4 +417,4 @@ export default quizAPI;
 /**
  * Re-export commonly used types and utilities
  */
-export type { QuizAnswer, QuizAttempt } from './rest/quiz';
+export type { QuizAnswer } from './rest/quiz';

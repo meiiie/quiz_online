@@ -1,22 +1,39 @@
 // ========================================================================
 // FILE: src/layouts/StudentLayout.tsx
-// PURPOSE: Layout dành riêng cho Student MFE - không có Header/Footer
-// DESIGN: Full-screen layout for dashboard experience
+// PURPOSE: Minimal wrapper cho Student MFE - để MFE tự quản lý layout
+// DESIGN: Clean wrapper pattern - không can thiệp vào MFE internal layout
+// FEATURES: MFE autonomy, event listening for future extensions
 // ========================================================================
 
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from "react"
 
 interface StudentLayoutProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export default function StudentLayout({ children }: StudentLayoutProps) {
+  // Optional: Lắng nghe các sự kiện từ Student MFE để có thể xử lý trong tương lai
+  useEffect(() => {
+    const handleSidebarToggle = (event: Event) => {
+      const customEvent = event as CustomEvent<{ isCollapsed: boolean }>
+      console.log("🏛️ Host-shell received sidebar toggle:", customEvent.detail.isCollapsed)
+
+      document.body.classList.toggle("sidebar-collapsed", customEvent.detail.isCollapsed)
+    }
+
+    // Listen for events from Student MFE (optional, for future use)
+    window.addEventListener("sidebar:toggle", handleSidebarToggle)
+
+    return () => {
+      window.removeEventListener("sidebar:toggle", handleSidebarToggle)
+    }
+  }, [])
+
   return (
-    <div className="w-full h-full bg-gray-50">
-      {/* No Header, No Footer - Full canvas for Student MFE */}
-      <main className="w-full h-full">
-        {children}
-      </main>
+    <div className="w-full h-screen overflow-hidden">
+      {/* Student MFE renders its own complete layout here */}
+      {children}
     </div>
-  );
+  )
 }
+

@@ -1,44 +1,88 @@
 /**
  * Sidebar Model - Student MFE
- * 
- * Triết lý: Hook đơn giản quản lý navigation items
- * Không có logic phức tạp, chỉ cung cấp data và basic functions
+ *
+ * Triết lý: "La Bàn Số" - Maritime Navigation System
+ * Design Vision: Professional Maritime Interface for Vietnam Maritime University
+ * Color Scheme: Navy Blue (#1A3BAD) + Compass Gold (#FFC107)
  */
 
-import { useMemo } from 'react';
-import { type StudentView } from '../../../shared/lib/viewManager';
+import { useMemo } from "react"
+import type { StudentView } from "../../../shared/lib/viewManager"
 
 export interface NavItem {
-  id: StudentView;
-  label: string;
-  icon: string;
+  id: StudentView
+  label: string
+  iconKey: string
+  description?: string
+  badge?: string // Optional badge for special items
+}
+
+export interface SecondaryAction {
+  id: string
+  label: string
+  iconKey: string
+  description?: string
+  onClick?: () => void
+}
+
+export interface UserInfo {
+  name: string
+  studentId: string
+  faculty: string
+  avatar: string
+  status: "online" | "offline" | "busy"
 }
 
 export const useSidebar = () => {
-  const navItems: NavItem[] = useMemo(() => [
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: '📊'
-    },
-    {
-      id: 'quizzes',
-      label: 'Quizzes',
-      icon: '📝'
-    },
-    {
-      id: 'history',
-      label: 'History',
-      icon: '📚'
-    },
-    {
-      id: 'profile',
-      label: 'Profile',
-      icon: '👤'
-    }
-  ], []);
+  // Maritime Navigation Items với thiết kế chuyên nghiệp
+  const navItems: NavItem[] = useMemo(
+    () => [
+      {
+        id: "dashboard",
+        label: "Bảng Điều Khiển",
+        description: "Tổng quan hoạt động",
+        iconKey: "anchor", // Maritime anchor symbol
+      },
+      {
+        id: "quizzes",
+        label: "Khám Phá Kiến Thức",
+        description: "Bài kiểm tra khả dụng",
+        iconKey: "list",
+        badge: "new", // Indicate new quizzes available
+      },
+      {
+        id: "history",
+        label: "Nhật Ký Hành Trình",
+        description: "Lịch sử học tập",
+        iconKey: "history",
+      },
+    ],
+    [],
+  )
+
+  // Secondary Actions - Bottom of sidebar
+  const secondaryActions: SecondaryAction[] = useMemo(
+    () => [
+      // Empty array - all actions moved to user dropdown for cleaner design
+    ],
+    [],
+  )
+
+  // Mock user data - In real app, this would come from auth context
+  const userInfo: UserInfo = useMemo(
+    () => ({
+      name: "Nguyễn Văn Hải",
+      studentId: "SV2024001",
+      faculty: "Khoa Hàng Hải",
+      avatar: "NH", // Initials for avatar
+      status: "online",
+    }),
+    [],
+  )
 
   return {
-    navItems
-  };
-};
+    navItems,
+    secondaryActions,
+    userInfo,
+  }
+}

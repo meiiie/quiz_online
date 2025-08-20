@@ -6,6 +6,7 @@
  */
 
 import type { Quiz, Question, QuizAttempt } from '../../../entities/quiz/model/types';
+import type { QuizAttempt as HistoryAttempt } from '../../../entities/history/model/types';
 
 /**
  * Mock Quizzes Database
@@ -224,6 +225,68 @@ export class MockDatabase {
     return completedAttempt;
   }
 }
+
+/**
+ * Mock Quiz History Database
+ * Professional mock data for quiz completion history
+ */
+export const MOCK_HISTORY: HistoryAttempt[] = [
+  {
+    id: 'attempt-1',
+    quizId: 'quiz_1',
+    quizTitle: 'JavaScript Fundamentals',
+    subject: 'Programming',
+    completedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+    score: 12,
+    totalQuestions: 15,
+    timeSpent: 1850, // 30:50 minutes
+    status: 'completed',
+  },
+  {
+    id: 'attempt-2', 
+    quizId: 'quiz_2',
+    quizTitle: 'React Hooks Deep Dive',
+    subject: 'Programming',
+    completedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+    score: 18,
+    totalQuestions: 20,
+    timeSpent: 2760, // 46:00 minutes
+    status: 'completed',
+  },
+  {
+    id: 'attempt-3',
+    quizId: 'quiz_3', 
+    quizTitle: 'CSS Grid & Flexbox',
+    subject: 'Web Design',
+    completedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week ago
+    score: 8,
+    totalQuestions: 12,
+    timeSpent: 1420, // 23:40 minutes
+    status: 'completed',
+  },
+  {
+    id: 'attempt-4',
+    quizId: 'quiz_1',
+    quizTitle: 'JavaScript Fundamentals', 
+    subject: 'Programming',
+    completedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), // 2 weeks ago
+    score: 10,
+    totalQuestions: 15,
+    timeSpent: 1680, // 28:00 minutes
+    status: 'completed',
+  },
+  {
+    id: 'attempt-5',
+    quizId: 'quiz_2',
+    quizTitle: 'React Hooks Deep Dive',
+    subject: 'Programming', 
+    completedAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(), // 3 weeks ago
+    score: 15,
+    totalQuestions: 20,
+    timeSpent: 3120, // 52:00 minutes
+    status: 'completed',
+  }
+];
 
 /**
  * Global mock database instance

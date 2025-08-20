@@ -26,6 +26,7 @@ import { Sidebar } from './widgets/Sidebar';
 import StudentDashboardPage from './pages/StudentDashboardPage';
 import QuizListPage from './pages/QuizListPage';
 import TakeQuizPage from './pages/TakeQuizPage';
+import { QuizHistoryPage } from './pages/QuizHistoryPage';
 
 // Main content renderer
 const AppContent = () => {
@@ -40,12 +41,7 @@ const AppContent = () => {
       case 'take-quiz':
         return <TakeQuizPage quizId={viewParams.quizId} />;
       case 'history':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">📚 Quiz History</h1>
-            <p>Your completed quizzes and results will be shown here.</p>
-          </div>
-        );
+        return <QuizHistoryPage />;
       case 'profile':
         return (
           <div className="p-6">
