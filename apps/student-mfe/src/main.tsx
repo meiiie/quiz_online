@@ -2,44 +2,71 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { quizAPI } from './shared/api'
 
 /**
- * Initialize API system (MSW + REST fallback)
- * Uses the facade pattern for automatic environment detection
+ * Enterprise MSW Setup - Student MFE
+ * Direct MSW initialization following best practices
  */
-async function initializeApp() {
+async function enableMocking() {
+  // Only enable MSW in development
+  if (typeof window === 'undefined' || window.location.hostname !== 'localhost') {
+    console.log('🔧 Production mode - MSW disabled');
+    return;
+  }
+
   try {
-    console.log('� Initializing Student MFE Application...');
+    console.log('🎭 Initializing MSW for development...');
     
-    // Initialize the API facade which handles MSW automatically
-    await quizAPI.initialize();
+    // Import MSW worker
+    const { worker } = await import('./shared/api/msw/browser');
     
-    console.log('✅ API: System initialized successfully');
+    // Start MSW with proper configuration
+    await worker.start({
+      onUnhandledRequest: 'warn',
+      quiet: false,
+      waitUntilReady: true,
+      serviceWorker: {
+        url: '/mockServiceWorker.js',
+        options: {
+          scope: '/'
+        }
+      }
+    });
     
-    // Test API connectivity
-    try {
-      const testResult = await quizAPI.test();
-      console.log('🎯 API Test:', testResult);
-    } catch (error) {
-      console.warn('⚠️ API Test failed, but system will continue:', error);
-    }
+    console.log('✅ MSW: Mock Service Worker started successfully');
+    console.log('🎯 MSW: Ready to intercept API calls');
     
   } catch (error) {
-    console.error('❌ Failed to initialize API system:', error);
-    console.log('📝 Application will continue with fallback behavior');
+    console.error('❌ MSW: Failed to start Mock Service Worker:', error);
+    console.log('📝 Application will continue without mocking');
   }
 }
 
-// Initialize app with API system
-initializeApp().then(() => {
-  // Small delay to ensure API system is fully initialized
-  setTimeout(() => {
-    createRoot(document.getElementById('root')!).render(
-      <StrictMode>
-        <App />
-      </StrictMode>,
-    );
-    console.log('🎉 Student MFE: Application rendered successfully');
-  }, 100); // 100ms delay for API initialization
+/**
+ * Initialize and render application
+ */
+async function initializeApp() {
+  // 1. First: Setup MSW (if in development)
+  await enableMocking();
+  
+  // 2. Then: Render React app
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
+  
+  console.log('🎉 Student MFE: Application rendered successfully');
+}
+
+// Start the application
+initializeApp().catch(error => {
+  console.error('❌ Failed to initialize application:', error);
+  
+  // Fallback: Render app anyway
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
 });

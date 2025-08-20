@@ -64,7 +64,7 @@ async function enableMocking() {
 
   const { worker } = await import('./shared/api/browser');
   
-  // Wait for service worker to be fully ready
+  // Clean MSW initialization - should be sufficient
   await worker.start({
     onUnhandledRequest: 'bypass', // Changed from 'warn'
     serviceWorker: {
@@ -72,8 +72,9 @@ async function enableMocking() {
     },
   });
   
-  // Additional wait to ensure registration
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  // ⚠️ AVOID: setTimeout hack - indicates underlying issues
+  // await new Promise(resolve => setTimeout(resolve, 1000));
+  // If you need setTimeout, investigate root cause instead
 }
 ```
 
@@ -138,6 +139,24 @@ If MSW continues to cause issues:
 2. **Fallback Strategy**: Always have working alternatives
 3. **Gradual Implementation**: Introduce complex tools incrementally
 4. **Development Continuity**: Don't let tooling block feature development
+5. **⭐ Timing Fixes**: Avoid `setTimeout` hacks - they mask root causes
+   - If `await worker.start()` isn't sufficient, investigate deeper
+   - Timing issues often indicate configuration or environment problems
+   - Clean async initialization should be the goal
+
+## 🎯 Best Practices Discovered
+
+### **MSW Integration Philosophy**
+- **Start Simple**: Direct `worker.start()` should work
+- **Debug Systematically**: Check service worker registration first
+- **Avoid Band-aids**: setTimeout indicates underlying issues
+- **Progressive Enhancement**: Fallback → MSW → Full integration
+
+### **Development Approach**
+- **Working First**: Get functionality working with any approach
+- **Refine Later**: Optimize and clean up implementation
+- **Document Everything**: Track what works and what doesn't
+- **Learn from Issues**: Each problem teaches better architecture
 
 ---
 

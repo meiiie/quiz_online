@@ -26,9 +26,6 @@ export const API_CONFIG = {
 import { quizApi as restQuizApi } from './rest/quiz';
 import { api as restApi } from './rest/base';
 
-// Fallback API (when everything else fails)
-import { fallbackAPI } from './fallback';
-
 /**
  * Dynamically import MSW only in development
  */
@@ -126,69 +123,13 @@ class ApiManager {
         quiz: restQuizApi
       };
     } else {
-      // Try REST API first, then fallback
-      try {
-        // Test REST API connectivity
-        await restApi.get('/test', { timeout: 3000 });
-        console.log('🌐 API: Using REST API');
-        return {
-          type: 'rest' as const,
-          api: restApi,
-          quiz: restQuizApi
-        };
-      } catch {
-        console.warn('🌐 API: REST API failed, using fallback API');
-        console.log('📦 API: Using Fallback Mock API');
-        return {
-          type: 'fallback' as const,
-          api: this.createFallbackApiWrapper(),
-          quiz: this.createFallbackQuizWrapper()
-        };
-      }
+      console.log('🌐 API: Using REST API');
+      return {
+        type: 'rest' as const,
+        api: restApi,
+        quiz: restQuizApi
+      };
     }
-  }
-
-  /**
-   * Create a wrapper around fallback API to match REST API interface
-   */
-  private createFallbackApiWrapper() {
-    return {
-      get: async <T = unknown>(endpoint: string) => {
-        // Simple endpoint routing for fallback
-        if (endpoint === '/test' || endpoint === 'test') {
-          const data = await fallbackAPI.test();
-          return { data } as { data: T };
-        }
-        throw new Error(`Fallback API: Endpoint "${endpoint}" not supported`);
-      },
-      post: async () => {
-        throw new Error('Fallback API: POST not supported');
-      },
-      put: async () => {
-        throw new Error('Fallback API: PUT not supported');
-      },
-      delete: async () => {
-        throw new Error('Fallback API: DELETE not supported');
-      },
-      patch: async () => {
-        throw new Error('Fallback API: PATCH not supported');
-      }
-    };
-  }
-
-  /**
-   * Create a wrapper around fallback API to match quiz API interface
-   */
-  private createFallbackQuizWrapper() {
-    return {
-      test: () => fallbackAPI.test(),
-      getAllQuizzes: () => fallbackAPI.getQuizzes(),
-      getQuiz: (id: string) => fallbackAPI.getQuiz(id),
-      getByCategory: (category: string) => fallbackAPI.getQuizzesByCategory(category),
-      getQuestions: (quizId: string) => fallbackAPI.getQuizQuestions(quizId),
-      startAttempt: (quizId: string, userId?: string) => fallbackAPI.startQuizAttempt(quizId, userId),
-      submitAttempt: (attemptId: string, answers: unknown[]) => fallbackAPI.submitQuizAttempt(attemptId, answers)
-    };
   }
 }
 
