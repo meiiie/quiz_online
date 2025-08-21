@@ -12,19 +12,29 @@ interface StudentLayoutProps {
 }
 
 export default function StudentLayout({ children }: StudentLayoutProps) {
-  // Optional: Lắng nghe các sự kiện từ Student MFE để có thể xử lý trong tương lai
+  // Enhanced: Listen for MFE sidebar events and adapt layout accordingly
   useEffect(() => {
     const handleSidebarToggle = (event: Event) => {
-      const customEvent = event as CustomEvent<{ isCollapsed: boolean }>
-      console.log("🏛️ Host-shell received sidebar toggle:", customEvent.detail.isCollapsed)
+      const customEvent = event as CustomEvent<{ isCollapsed: boolean; width: number }>
+      console.log("🏛️ Host-shell received sidebar toggle:", customEvent.detail)
 
-      document.body.classList.toggle("sidebar-collapsed", customEvent.detail.isCollapsed)
+      // Apply dynamic margin based on sidebar width for better integration
+      const { isCollapsed, width } = customEvent.detail
+      document.body.classList.toggle("sidebar-collapsed", isCollapsed)
+      
+      // Set CSS custom property for potential layout adjustments
+      document.documentElement.style.setProperty(
+        '--vmu-sidebar-width', 
+        `${width || (isCollapsed ? 80 : 320)}px`
+      )
     }
 
-    // Listen for events from Student MFE (optional, for future use)
-    window.addEventListener("sidebar:toggle", handleSidebarToggle)
+    // Listen for enhanced events from Student MFE
+    window.addEventListener("vmu:sidebar:toggle", handleSidebarToggle)
+    window.addEventListener("sidebar:toggle", handleSidebarToggle) // Backward compatibility
 
     return () => {
+      window.removeEventListener("vmu:sidebar:toggle", handleSidebarToggle)
       window.removeEventListener("sidebar:toggle", handleSidebarToggle)
     }
   }, [])

@@ -61,12 +61,16 @@ const AppContent = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar - Navigation Widget */}
-      <Sidebar />
+      {/* Sidebar - Navigation Widget - Fixed Container */}
+      <div className="flex-shrink-0">
+        <Sidebar />
+      </div>
       
       {/* Main Content - Pages */}
-      <main className="flex-1 overflow-auto">
-        {renderView()}
+      <main className="flex-1 overflow-auto bg-white">
+        <div className="h-full">
+          {renderView()}
+        </div>
       </main>
     </div>
   );

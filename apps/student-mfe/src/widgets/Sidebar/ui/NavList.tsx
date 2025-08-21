@@ -23,7 +23,7 @@ interface NavListProps {
 
 export const NavList: FC<NavListProps> = ({ navItems, currentView, onViewChange, isCollapsed }) => {
   return (
-    <nav className={`flex-1 overflow-hidden transition-all duration-300 ${isCollapsed ? "px-1 py-3" : "px-3 py-4"}`}>
+    <nav className={`flex-1 transition-all duration-300 ${isCollapsed ? "px-1 py-3" : "px-3 py-4"}`}>
       {/* Section Title - Professional */}
       {!isCollapsed && (
         <div className="mb-4 px-2">

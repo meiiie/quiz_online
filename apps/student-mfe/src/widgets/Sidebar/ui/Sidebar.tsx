@@ -22,6 +22,7 @@ import { useSidebar } from "../model/useSidebar"
 import { SidebarHeader } from "./SidebarHeader"
 import { UserInfoCard } from "./UserInfoCard"
 import { NavList } from "./NavList"
+import { SecondaryActions } from "./SecondaryActions"
 
 export interface SidebarProps {
   className?: string
@@ -38,7 +39,7 @@ const getInitialCollapsedState = (): boolean => {
 
 export const Sidebar: FC<SidebarProps> = ({ className = "" }) => {
   const { currentView, setView } = useView()
-  const { navItems, userInfo } = useSidebar()
+  const { navItems, secondaryActions, userInfo } = useSidebar()
 
   // Enhanced state management with smooth transitions
   const [isCollapsed, setIsCollapsed] = useState(getInitialCollapsedState)
@@ -54,8 +55,9 @@ export const Sidebar: FC<SidebarProps> = ({ className = "" }) => {
       setIsCollapsed(newCollapsedState)
       localStorage.setItem("vmu-sidebar-collapsed", JSON.stringify(newCollapsedState))
 
+      // Notify host application
       window.dispatchEvent(
-        new CustomEvent("sidebar:toggle", {
+        new CustomEvent("vmu:sidebar:toggle", {
           detail: { isCollapsed: newCollapsedState },
         }),
       )
@@ -67,101 +69,135 @@ export const Sidebar: FC<SidebarProps> = ({ className = "" }) => {
   // Initial state notification
   useEffect(() => {
     window.dispatchEvent(
-      new CustomEvent("sidebar:toggle", {
+      new CustomEvent("vmu:sidebar:toggle", {
         detail: { isCollapsed },
       }),
     )
   }, [])
 
   return (
-    <>
+    <div className="relative h-full overflow-visible">
+      {/* Toggle Button - Positioned absolutely relative to the container */}
       <button
         onClick={handleToggle}
         className={`
-          fixed top-6 z-50 
-          w-6 h-10 bg-gradient-to-b from-[#1A3BAD] to-[#2563eb] hover:from-[#2563eb] hover:to-[#1A3BAD]
-          text-white rounded-r-lg shadow-lg hover:shadow-xl
+          absolute top-6 z-[100] 
+          w-8 h-12 bg-gradient-to-b from-[#1A3BAD] to-[#2563eb] hover:from-[#2563eb] hover:to-[#1A3BAD]
+          text-white rounded-r-xl shadow-lg hover:shadow-xl
           flex items-center justify-center
           transition-all duration-500 ease-in-out
           border border-l-0 border-[#FFC107]/30 hover:border-[#FFC107]/60
-          ${isCollapsed ? "left-16" : "left-64"}
+          ${isCollapsed ? "left-[76px]" : "left-[302px]"}
         `}
         title={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
         aria-label={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
       >
-        <div className={`transition-transform duration-500 ease-in-out ${isCollapsed ? "rotate-0" : "rotate-180"}`}>
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-            <path d="M15 18l-6-6 6-6" />
+        <div className={`transition-transform duration-300 ${isCollapsed ? "rotate-0" : "rotate-180"}`}>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+            <polyline points="15,18 9,12 15,6" />
           </svg>
         </div>
       </button>
 
+      {/* Professional VMU Sidebar - Static Layout */}
       <aside
         className={`
-        relative h-full bg-white flex flex-col shadow-2xl transition-all duration-500 ease-in-out
-        ${isCollapsed ? "w-16 min-w-[4rem] max-w-[4rem]" : "w-64 min-w-[16rem] max-w-[16rem]"}
-        ${isTransitioning ? "pointer-events-none" : ""}
-        ${className}
-      `}
+          relative h-full bg-white flex flex-col shadow-xl border-r border-gray-200/80
+          transition-all duration-500 ease-in-out overflow-hidden
+          ${isCollapsed ? "w-20" : "w-80"}
+          ${isTransitioning ? "pointer-events-none" : ""}
+          ${className}
+        `}
       >
+
+        {/* Professional LED Accent Border */}
         <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#1A3BAD] via-[#FFC107] to-[#1A3BAD] shadow-lg shadow-[#1A3BAD]/30 z-10">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/30 to-transparent animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/30 to-transparent animate-pulse" />
         </div>
 
-        {/* VMU Maritime Header - Compact */}
-        <SidebarHeader isCollapsed={isCollapsed} onToggle={handleToggle} isTransitioning={isTransitioning} />
+        {/* Enhanced Sidebar Content */}
+        <div className="flex flex-col h-full overflow-hidden relative z-0">
+          {/* VMU Maritime Header */}
+          <SidebarHeader isCollapsed={isCollapsed} onToggle={handleToggle} isTransitioning={isTransitioning} />
 
-        {/* User Information Section - Compact */}
-        <UserInfoCard userInfo={userInfo} isCollapsed={isCollapsed} />
+          {/* Enhanced User Information Section */}
+          <UserInfoCard userInfo={userInfo} isCollapsed={isCollapsed} />
 
-        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-[#1A3BAD]/50">
-          <div className={`flex items-center transition-all duration-300 ${isCollapsed ? "px-2 py-2" : "px-4 py-2"}`}>
+          {/* Professional Section Divider */}
+          <div
+            className={`
+            flex items-center transition-all duration-300 bg-gradient-to-r from-gray-50 to-white
+            ${isCollapsed ? "px-4 py-4" : "px-6 py-5"}
+          `}
+          >
             {!isCollapsed ? (
               <>
-                <div className="w-1.5 h-1.5 bg-[#1A3BAD] rounded-full"></div>
-                <div className="flex-1 h-px bg-gradient-to-r from-[#1A3BAD]/30 via-gray-300 to-transparent ml-2"></div>
+                <div className="w-2.5 h-2.5 bg-[#1A3BAD] rounded-full animate-pulse" />
+                <span className="text-sm font-bold text-gray-600 uppercase tracking-wider ml-4 mr-5">
+                  Điều hướng chính
+                </span>
+                <div className="flex-1 h-px bg-gradient-to-r from-[#1A3BAD]/40 to-transparent" />
               </>
             ) : (
-              <div className="w-full h-px bg-gradient-to-r from-transparent via-[#1A3BAD]/50 to-transparent"></div>
+              <div className="w-full h-px bg-gradient-to-r from-transparent via-[#1A3BAD]/50 to-transparent" />
             )}
           </div>
 
-          {/* Main Navigation - Enhanced Design */}
-          <NavList navItems={navItems} currentView={currentView} onViewChange={setView} isCollapsed={isCollapsed} />
-        </div>
+          {/* Scrollable Navigation Area */}
+          <div className="flex-1 overflow-y-auto overflow-x-visible scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-[#1A3BAD]/50">
+            {/* Enhanced Main Navigation */}
+            <NavList navItems={navItems} currentView={currentView} onViewChange={setView} isCollapsed={isCollapsed} />
+          </div>
 
-        {/* Bottom Section Divider */}
-        <div className={`flex items-center transition-all duration-300 ${isCollapsed ? "px-2 py-2" : "px-4 py-2"}`}>
-          {!isCollapsed ? (
-            <>
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-[#1A3BAD]/30 mr-2"></div>
-              <div className="w-1.5 h-1.5 bg-[#1A3BAD] rounded-full"></div>
-            </>
-          ) : (
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-[#1A3BAD]/50 to-transparent"></div>
-          )}
-        </div>
+          {/* Enhanced Secondary Actions */}
+          <SecondaryActions secondaryActions={secondaryActions} isCollapsed={isCollapsed} />
 
-        {/* Clean Footer - Single Version */}
-        <footer
-          className={`flex-shrink-0 bg-gradient-to-r from-[#1A3BAD]/5 to-[#FFC107]/5 border-t border-gray-200/50 transition-all duration-300 ${isCollapsed ? "px-2 py-2" : "px-4 py-3"}`}
-        >
-          {!isCollapsed && (
-            <div className="text-center">
-              <p className="text-xs text-gray-500 font-medium">© 2025 VMU Portal</p>
-              <p className="text-xs text-gray-400 mt-0.5">Trường ĐH Hàng hải Việt Nam</p>
+          {/* Professional Maritime Footer */}
+          <footer
+            className={`
+            flex-shrink-0 bg-gradient-to-r from-[#1A3BAD]/5 to-[#FFC107]/5 
+            border-t border-gray-200/50 transition-all duration-300 relative overflow-hidden
+            ${isCollapsed ? "px-4 py-5" : "px-6 py-6"}
+          `}
+          >
+            <div className="relative z-10">
+              {!isCollapsed ? (
+                <div className="text-center space-y-3">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-[#1A3BAD] rounded-xl flex items-center justify-center shadow-md">
+                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2L3 7v11h14V7l-7-5zM8 16H6v-4h2v4zm4 0h-2v-4h2v4zm4 0h-2v-4h2v4z" />
+                      </svg>
+                    </div>
+                    <span className="text-lg font-bold text-[#1A3BAD]">VMU Portal</span>
+                  </div>
+                  <p className="text-sm text-gray-500 font-medium">Trường Đại học Hàng hải Việt Nam</p>
+                  <p className="text-xs text-gray-400">© 2024 VMU Portal v2.0</p>
+                </div>
+              ) : (
+                <div className="flex justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#1A3BAD] to-[#2563eb] rounded-xl flex items-center justify-center shadow-md group hover:scale-105 transition-transform duration-300">
+                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 2L3 7v11h14V7l-7-5z" />
+                    </svg>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-          {isCollapsed && (
-            <div className="flex justify-center">
-              <div className="w-2 h-2 bg-[#1A3BAD] rounded-full opacity-60"></div>
-            </div>
-          )}
-        </footer>
 
-        <div className="h-1 bg-gradient-to-r from-[#1A3BAD] via-[#FFC107] to-[#1A3BAD] shadow-inner"></div>
+            {/* Animated background pattern */}
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1A3BAD]/10 via-transparent to-[#FFC107]/10" />
+            </div>
+          </footer>
+
+          {/* Professional Bottom Accent Line */}
+          <div className="h-1 bg-gradient-to-r from-[#1A3BAD] via-[#FFC107] to-[#1A3BAD] shadow-inner">
+            <div className="h-full bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+          </div>
+        </div>
       </aside>
-    </>
+    </div>
   )
 }
 
